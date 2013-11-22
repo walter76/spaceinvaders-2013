@@ -3,6 +3,8 @@ package de.thnuernberg.bme.swe.spaceinvaders;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 
 import javax.swing.JPanel;
 
@@ -14,14 +16,31 @@ public class GamePanel extends JPanel {
 	private static final int PANEL_WIDTH = 455;
 	private static final int PANEL_HEIGHT = 500;
 
-	private final SpaceInvadersSpriteSheet spaceInvadersSpriteSheet = new SpaceInvadersSpriteSheet();
-	
+	private final SpriteFactory spriteFactory = new SpriteFactory();
+
 	public GamePanel() {
 		// set the background color to black
 		setBackground(Color.BLACK);
 
 		// set the size of the game panel
 		setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
+		
+		setFocusable(true);
+		requestFocus();
+		addKeyListener();
+	}
+
+	private void addKeyListener() {
+		addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyChar() == 'a') {
+					// nach links
+				} else if (e.getKeyChar() == 'd') {
+					// nach rechts
+				}
+			}
+		});
 	}
 
 	// we override this method to be able to draw in the game panel
@@ -40,7 +59,6 @@ public class GamePanel extends JPanel {
 		final int height = 20;
 		final int spacing = 5;
 
-		// we have four rows of alien ships
 		for (int j = 0; j < 5; j++) {
 			// for every row we calculate the y-position of the ships
 			final int y = spacing + j * (spacing + height);
@@ -51,7 +69,7 @@ public class GamePanel extends JPanel {
 				final int x = spacing + i * (spacing + width);
 
 				// draw the alien ship
-				graphicsContext.drawImage(spaceInvadersSpriteSheet.getAlienSprite(), x, y, null);
+				spriteFactory.getAlienSprite(j).draw(graphicsContext, x, y);
 			}
 		}
 	}

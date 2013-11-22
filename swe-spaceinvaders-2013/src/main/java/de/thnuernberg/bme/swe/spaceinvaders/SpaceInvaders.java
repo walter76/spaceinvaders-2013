@@ -11,8 +11,6 @@ public class SpaceInvaders {
 		// exit the application if the main window is closed
 		spaceInvadersWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		// hier ist eine Änderung
-		
 		// set the window title to "Space Invaders"
 		spaceInvadersWindow.setTitle("Space Invaders");
 		
