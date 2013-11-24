@@ -16,6 +16,7 @@ public class GamePanel extends JPanel {
 	private static final int PANEL_WIDTH = 455;
 	private static final int PANEL_HEIGHT = 500;
 
+	// the sprite factory provides the sprites for the game
 	private final SpriteFactory spriteFactory = new SpriteFactory();
 
 	public GamePanel() {
@@ -24,9 +25,12 @@ public class GamePanel extends JPanel {
 
 		// set the size of the game panel
 		setPreferredSize(new Dimension(PANEL_WIDTH, PANEL_HEIGHT));
-		
+
+		// make the game panel focusable
 		setFocusable(true);
+		// set the focus to the game panel, to receive keyboard input
 		requestFocus();
+		// add the listener for the keyboard input
 		addKeyListener();
 	}
 
@@ -35,10 +39,14 @@ public class GamePanel extends JPanel {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyChar() == 'a') {
-					// nach links
+					// move the player to the left on key 'a'
 				} else if (e.getKeyChar() == 'd') {
-					// nach rechts
+					// move the player to the right on key 'd'
+				} else if (e.getKeyChar() == ' ') {
+					// shoot a laser bullet
 				}
+				// repaint the panel
+				repaint();
 			}
 		});
 	}
@@ -59,17 +67,20 @@ public class GamePanel extends JPanel {
 		final int height = 20;
 		final int spacing = 5;
 
-		for (int j = 0; j < 5; j++) {
+		// we have five rows of alien ships
+		for (int row = 0; row < 5; row++) {
 			// for every row we calculate the y-position of the ships
-			final int y = spacing + j * (spacing + height);
+			final int y = spacing + row * (spacing + height);
 
 			// we have 11 alien ships per row
 			for (int i = 0; i < 11; i++) {
 				// for every alien ship we calculate its x-position
 				final int x = spacing + i * (spacing + width);
 
-				// draw the alien ship
-				spriteFactory.getAlienSprite(j).draw(graphicsContext, x, y);
+				// get the sprite for a certain row
+				final Sprite alienSprite = spriteFactory.getAlienSprite(row);
+				// draw the alien ship sprite
+				alienSprite.draw(graphicsContext, x, y);
 			}
 		}
 	}

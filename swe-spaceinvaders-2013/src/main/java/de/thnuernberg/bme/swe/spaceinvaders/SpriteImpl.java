@@ -3,24 +3,21 @@ package de.thnuernberg.bme.swe.spaceinvaders;
 import java.awt.Graphics;
 import java.awt.Image;
 
+// default implementation for the sprite
 public class SpriteImpl implements Sprite {
 
-	private Image sprite;
+	// variable to hold the sprite image
+	private final Image sprite;
 	
 	public SpriteImpl(Image sprite) {
 		this.sprite = sprite;
 	}
 	
-	/* (non-Javadoc)
-	 * @see de.thnuernberg.bme.swe.spaceinvaders.Sprite#draw(java.awt.Graphics, int, int)
-	 */
+	// implements the interface method draw from Sprite
 	@Override
 	public void draw(Graphics graphicsContext, int x, int y) {
+		// draw the sprite image to the graphics context
 		graphicsContext.drawImage(sprite, x, y, null);
-	}
-	
-	public void hallo() {
-		
 	}
 	
 }
