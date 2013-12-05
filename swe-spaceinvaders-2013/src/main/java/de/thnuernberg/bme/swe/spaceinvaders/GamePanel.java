@@ -13,11 +13,16 @@ public class GamePanel extends JPanel {
 	private static final long serialVersionUID = 1L;
 
 	// declare constants for the width and height of the game panel
-	private static final int PANEL_WIDTH = 455;
-	private static final int PANEL_HEIGHT = 500;
+	private static final int PANEL_WIDTH = 335;
+	private static final int PANEL_HEIGHT = 300;
+	private static final int SPACING = 5;
+	private static final int PLAYER_VELOCITY = 5;
 
 	// the sprite factory provides the sprites for the game
 	private final SpriteFactory spriteFactory = new SpriteFactory();
+
+	private int playerX;
+	private int playerY;
 
 	public GamePanel() {
 		// set the background color to black
@@ -32,6 +37,13 @@ public class GamePanel extends JPanel {
 		requestFocus();
 		// add the listener for the keyboard input
 		addKeyListener();
+
+		resetPlayerShipToStartPosition();
+	}
+
+	private void resetPlayerShipToStartPosition() {
+		playerX = (PANEL_WIDTH - 25) / 2 - SPACING;
+		playerY = PANEL_HEIGHT - 20 - SPACING;
 	}
 
 	private void addKeyListener() {
@@ -40,8 +52,10 @@ public class GamePanel extends JPanel {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyChar() == 'a') {
 					// move the player to the left on key 'a'
+					movePlayerShipLeft();
 				} else if (e.getKeyChar() == 'd') {
 					// move the player to the right on key 'd'
+					movePlayerShipRight();
 				} else if (e.getKeyChar() == ' ') {
 					// shoot a laser bullet
 				}
@@ -49,6 +63,20 @@ public class GamePanel extends JPanel {
 				repaint();
 			}
 		});
+	}
+
+	private void movePlayerShipRight() {
+		playerX += PLAYER_VELOCITY;
+		if (playerX > (PANEL_WIDTH - 25 - SPACING)) {
+			playerX = PANEL_WIDTH - 25 - SPACING;
+		}
+	}
+
+	private void movePlayerShipLeft() {
+		playerX -= PLAYER_VELOCITY;
+		if (playerX < SPACING) {
+			playerX = SPACING;
+		}
 	}
 
 	// we override this method to be able to draw in the game panel
@@ -63,19 +91,18 @@ public class GamePanel extends JPanel {
 		graphicsContext.setColor(Color.WHITE);
 
 		// declare width, height and spacing
-		final int width = 28;
+		final int width = 25;
 		final int height = 20;
-		final int spacing = 5;
 
 		// we have five rows of alien ships
 		for (int row = 0; row < 5; row++) {
 			// for every row we calculate the y-position of the ships
-			final int y = spacing + row * (spacing + height);
+			final int y = SPACING + row * (SPACING + height);
 
 			// we have 11 alien ships per row
 			for (int i = 0; i < 11; i++) {
 				// for every alien ship we calculate its x-position
-				final int x = spacing + i * (spacing + width);
+				final int x = SPACING + i * (SPACING + width);
 
 				// get the sprite for a certain row
 				final Sprite alienSprite = spriteFactory.getAlienSprite(row);
@@ -83,6 +110,9 @@ public class GamePanel extends JPanel {
 				alienSprite.draw(graphicsContext, x, y);
 			}
 		}
+
+		Sprite playerSprite = spriteFactory.getPlayerSprite();
+		playerSprite.draw(graphicsContext, playerX, playerY);
 	}
 
 }
