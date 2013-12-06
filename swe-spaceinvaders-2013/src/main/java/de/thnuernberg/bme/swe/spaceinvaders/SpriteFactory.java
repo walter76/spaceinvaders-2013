@@ -47,7 +47,7 @@ public class SpriteFactory {
 	public Sprite getPlayerSprite() {
 		return new SpriteImpl(spriteSheet.getSubimage(277, 220, 25, 20));
 	}
-	
+
 	private Sprite getLastRowAlienSprite() {
 		return new SpriteImpl(spriteSheet.getSubimage(35, 220, 25, 20));
 	}

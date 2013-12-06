@@ -16,14 +16,12 @@ public class GamePanel extends JPanel {
 	private static final int PANEL_WIDTH = 335;
 	private static final int PANEL_HEIGHT = 300;
 	private static final int SPACING = 5;
-	private static final int PLAYER_VELOCITY = 5;
 
 	// the sprite factory provides the sprites for the game
 	private final SpriteFactory spriteFactory = new SpriteFactory();
 
-	private int playerX;
-	private int playerY;
-
+	private final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH, PANEL_HEIGHT, SPACING);
+	
 	public GamePanel() {
 		// set the background color to black
 		setBackground(Color.BLACK);
@@ -38,12 +36,7 @@ public class GamePanel extends JPanel {
 		// add the listener for the keyboard input
 		addKeyListener();
 
-		resetPlayerShipToStartPosition();
-	}
-
-	private void resetPlayerShipToStartPosition() {
-		playerX = (PANEL_WIDTH - 25) / 2 - SPACING;
-		playerY = PANEL_HEIGHT - 20 - SPACING;
+		playerShip.resetToStartPosition();
 	}
 
 	private void addKeyListener() {
@@ -52,10 +45,10 @@ public class GamePanel extends JPanel {
 			public void keyPressed(KeyEvent e) {
 				if (e.getKeyChar() == 'a') {
 					// move the player to the left on key 'a'
-					movePlayerShipLeft();
+					playerShip.moveLeft();
 				} else if (e.getKeyChar() == 'd') {
 					// move the player to the right on key 'd'
-					movePlayerShipRight();
+					playerShip.moveRight();
 				} else if (e.getKeyChar() == ' ') {
 					// shoot a laser bullet
 				}
@@ -65,24 +58,10 @@ public class GamePanel extends JPanel {
 		});
 	}
 
-	private void movePlayerShipRight() {
-		playerX += PLAYER_VELOCITY;
-		if (playerX > (PANEL_WIDTH - 25 - SPACING)) {
-			playerX = PANEL_WIDTH - 25 - SPACING;
-		}
-	}
-
-	private void movePlayerShipLeft() {
-		playerX -= PLAYER_VELOCITY;
-		if (playerX < SPACING) {
-			playerX = SPACING;
-		}
-	}
-
 	// we override this method to be able to draw in the game panel
 	// it is called by swing every time the game panel is redrawn
 	@Override
-	public void paintComponent(Graphics graphicsContext) {
+	public void paintComponent(final Graphics graphicsContext) {
 		// we extend the behavior of the method in the super class, so we call
 		// the super class method first
 		super.paintComponent(graphicsContext);
@@ -112,7 +91,7 @@ public class GamePanel extends JPanel {
 		}
 
 		Sprite playerSprite = spriteFactory.getPlayerSprite();
-		playerSprite.draw(graphicsContext, playerX, playerY);
+		playerSprite.draw(graphicsContext, playerShip.getX(), playerShip.getY());
 	}
 
 }
