@@ -8,7 +8,7 @@ import java.awt.event.KeyEvent;
 
 import javax.swing.JPanel;
 
-public class GamePanel extends JPanel {
+public class GamePanel extends JPanel implements Runnable {
 
 	private static final long serialVersionUID = 1L;
 
@@ -20,7 +20,11 @@ public class GamePanel extends JPanel {
 	// the sprite factory provides the sprites for the game
 	private final SpriteFactory spriteFactory = new SpriteFactory();
 
+	// player ship
 	private final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH, PANEL_HEIGHT, SPACING);
+	
+	// flag to indicate whether the game is running or not
+	private boolean gameRunning;
 	
 	public GamePanel() {
 		// set the background color to black
@@ -43,7 +47,9 @@ public class GamePanel extends JPanel {
 		addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.getKeyChar() == 'a') {
+				if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+					stopGame();
+				} else if (e.getKeyChar() == 'a') {
 					// move the player to the left on key 'a'
 					playerShip.moveLeft();
 				} else if (e.getKeyChar() == 'd') {
@@ -51,6 +57,7 @@ public class GamePanel extends JPanel {
 					playerShip.moveRight();
 				} else if (e.getKeyChar() == ' ') {
 					// shoot a laser bullet
+					playerShip.fire();
 				}
 				// repaint the panel
 				repaint();
@@ -92,6 +99,53 @@ public class GamePanel extends JPanel {
 
 		Sprite playerSprite = spriteFactory.getPlayerSprite();
 		playerSprite.draw(graphicsContext, playerShip.getX(), playerShip.getY());
+		
+		// draw the laser bullet (only if fired)
+		if(playerShip.hasLaserFired()) {
+			graphicsContext.fillOval(playerShip.getLaserX(), playerShip.getLaserY(), 5, 5);
+		}
 	}
 
+	// is called as soon as we start the new thread
+	// main method of the animator tread
+	@Override
+	public void run() {
+		// as long as gameRunning is true, the game loop is running
+		while(gameRunning) {
+			// we sleep 100 ms letting other threads do something
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// ignored
+			}
+			
+			// update the game
+			playerShip.update();
+			
+			// repaint the panel
+			repaint();
+		}
+	}
+
+	// is called by the framework as soon as the game panel is shown
+	// to the user
+	@Override
+	public void addNotify() {
+		super.addNotify();
+		
+		startGame();
+	}
+
+	// starts the animator background thread and therefore the game loop
+	private void startGame() {
+		Thread animator = new Thread(this);
+		gameRunning = true;
+		animator.start();
+	}
+
+	// stops the game loop and therefore the animator thread
+	private void stopGame() {
+		gameRunning = false;
+	}
+	
 }

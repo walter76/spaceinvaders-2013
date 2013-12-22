@@ -10,6 +10,9 @@ public class PlayerShip {
 	
 	private int x;
 	private int y;
+	private int laserX;
+	private int laserY;
+	private boolean laserFired;
 
 	public PlayerShip(final int panelWidth, final int panelHeight, final int spacing) {
 		this.panelWidth = panelWidth;
@@ -48,6 +51,33 @@ public class PlayerShip {
 		x -= VELOCITY;
 		if (x < spacing) {
 			x = spacing;
+		}
+	}
+	
+	public void fire() {
+		laserFired = true;
+		laserX = x;
+		laserY = y;
+	}
+	
+	public boolean hasLaserFired() {
+		return laserFired;
+	}
+	
+	public int getLaserX() {
+		return laserX;
+	}
+	
+	public int getLaserY() {
+		return laserY;
+	}
+	
+	public void update() {
+		if (laserFired) {
+			laserY -= 5;
+			if (laserY < 0) {
+				laserFired = false;
+			}
 		}
 	}
 	
