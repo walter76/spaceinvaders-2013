@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Random;
 
 import javax.swing.JPanel;
 
@@ -104,6 +105,9 @@ public class GamePanel extends JPanel implements Runnable {
 		if(playerShip.hasLaserFired()) {
 			graphicsContext.fillOval(playerShip.getLaserX(), playerShip.getLaserY(), 5, 5);
 		}
+		
+		// draw the bullet of the alien ship
+		// --- add your code here ---
 	}
 
 	// is called as soon as we start the new thread
@@ -121,6 +125,20 @@ public class GamePanel extends JPanel implements Runnable {
 			
 			// update the game
 			playerShip.update();
+			
+			// if there is no bullet of a alien ship:
+			// --- add your code here ---
+			
+			// randomly select a alien ship to fire back
+			Random random = new Random();
+			int playerShipNumber = random.nextInt(54);
+			
+			// calculate the start coordinates for the bullet of the alien ship
+			// --- add your code here ---
+			
+			// if there is a bullet of a alien ship:
+			// update the laser bullet coordinates
+			// --- add your code here ---
 			
 			// repaint the panel
 			repaint();
