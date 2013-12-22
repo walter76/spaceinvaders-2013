@@ -75,12 +75,12 @@ public class PlayerShipTest {
 
 		playerShip.resetToStartPosition();
 		final int startX = playerShip.getX();
-		
+
 		playerShip.moveRight();
-		
+
 		Assert.assertEquals(startX, playerShip.getX());
 	}
-	
+
 	@Test
 	public void moveLeftOutOfBounds() {
 		final int panelWidth = 45;
@@ -89,10 +89,87 @@ public class PlayerShipTest {
 
 		playerShip.resetToStartPosition();
 		final int startX = playerShip.getX();
-		
+
 		playerShip.moveLeft();
-		
+
 		Assert.assertEquals(startX, playerShip.getX());
+	}
+
+	@Test
+	public void laserNotFired() {
+		final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH, PANEL_HEIGHT,
+				SPACING);
+
+		Assert.assertFalse(playerShip.hasLaserFired());
+	}
+
+	@Test
+	public void fireLaser() {
+		final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH, PANEL_HEIGHT,
+				SPACING);
+
+		playerShip.fire();
+
+		Assert.assertTrue(playerShip.hasLaserFired());
+	}
+
+	@Test
+	public void fireLaserInitialLaserBulletPosition() {
+		final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH, PANEL_HEIGHT,
+				SPACING);
+
+		playerShip.resetToStartPosition();
+		playerShip.fire();
+
+		Assert.assertEquals(playerShip.getX(), playerShip.getLaserX());
+		Assert.assertEquals(playerShip.getY(), playerShip.getLaserY());
+	}
+
+	@Test
+	public void updateAfterLaserFired() {
+		final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH, PANEL_HEIGHT,
+				SPACING);
+
+		playerShip.resetToStartPosition();
+		playerShip.fire();
+		final int startLaserX = playerShip.getLaserX();
+		final int startLaserY = playerShip.getLaserY();
+
+		playerShip.update();
+
+		Assert.assertEquals(startLaserX, playerShip.getLaserX());
+		Assert.assertEquals(startLaserY - 5, playerShip.getLaserY());
+	}
+
+	@Test
+	public void updateLaserNotFired() {
+		final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH, PANEL_HEIGHT,
+				SPACING);
+
+		playerShip.resetToStartPosition();
+		final int startLaserX = playerShip.getLaserX();
+		final int startLaserY = playerShip.getLaserY();
+
+		playerShip.update();
+
+		Assert.assertEquals(startLaserX, playerShip.getLaserX());
+		Assert.assertEquals(startLaserY, playerShip.getLaserY());
+	}
+
+	@Test
+	public void updateLaserOutOfBounds() {
+		final int panelHeight = 20;
+		final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH, panelHeight,
+				SPACING);
+
+		playerShip.resetToStartPosition();
+		playerShip.fire();
+
+		Assert.assertTrue(playerShip.hasLaserFired());
+
+		playerShip.update();
+
+		Assert.assertFalse(playerShip.hasLaserFired());
 	}
 
 }
