@@ -3,8 +3,8 @@ package de.thnuernberg.bme.swe.spaceinvaders;
 public class PlayerShip {
 
 	public static final int VELOCITY = 5;
-	private static final int WIDTH = 25;
-	private static final int HEIGHT = 20;
+	public static final int WIDTH = 25;
+	public static final int HEIGHT = 20;
 	
 	private final int panelWidth;
 	private final int panelHeight;

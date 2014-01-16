@@ -123,8 +123,8 @@ public class PlayerShipTest {
 		playerShip.fire();
 
 		Laser laser = playerShip.getLaser();
-		Assert.assertEquals(playerShip.getX(), laser.getX());
-		Assert.assertEquals(playerShip.getY(), laser.getY());
+		Assert.assertEquals(playerShip.getX() + (PlayerShip.WIDTH - 5) / 2, laser.getX());
+		Assert.assertEquals(playerShip.getY() - 5, laser.getY());
 	}
 
 	@Test
