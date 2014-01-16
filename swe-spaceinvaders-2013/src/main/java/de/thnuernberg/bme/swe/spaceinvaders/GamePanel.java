@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import javax.swing.JPanel;
@@ -27,6 +29,9 @@ public class GamePanel extends JPanel implements Runnable {
 	// flag to indicate whether the game is running or not
 	private boolean gameRunning;
 	
+	// list of alien ships
+	private final List<AlienShip> alienShips = new ArrayList<AlienShip>();
+	
 	public GamePanel() {
 		// set the background color to black
 		setBackground(Color.BLACK);
@@ -41,6 +46,7 @@ public class GamePanel extends JPanel implements Runnable {
 		// add the listener for the keyboard input
 		addKeyListener();
 
+		createAlienShips();
 		playerShip.resetToStartPosition();
 	}
 
@@ -66,17 +72,7 @@ public class GamePanel extends JPanel implements Runnable {
 		});
 	}
 
-	// we override this method to be able to draw in the game panel
-	// it is called by swing every time the game panel is redrawn
-	@Override
-	public void paintComponent(final Graphics graphicsContext) {
-		// we extend the behavior of the method in the super class, so we call
-		// the super class method first
-		super.paintComponent(graphicsContext);
-
-		// set the paint color to white
-		graphicsContext.setColor(Color.WHITE);
-
+	private void createAlienShips() {
 		// declare width, height and spacing
 		final int width = 25;
 		final int height = 20;
@@ -90,24 +86,47 @@ public class GamePanel extends JPanel implements Runnable {
 			for (int i = 0; i < 11; i++) {
 				// for every alien ship we calculate its x-position
 				final int x = SPACING + i * (SPACING + width);
-
-				// get the sprite for a certain row
-				final Sprite alienSprite = spriteFactory.getAlienSprite(row);
-				// draw the alien ship sprite
-				alienSprite.draw(graphicsContext, x, y);
+				
+				// add the alien ship to the collection
+				alienShips.add(new AlienShip(x, y, width, height, row, PANEL_HEIGHT, SPACING));
 			}
+		}
+	}
+	
+	// we override this method to be able to draw in the game panel
+	// it is called by swing every time the game panel is redrawn
+	@Override
+	public void paintComponent(final Graphics graphicsContext) {
+		// we extend the behavior of the method in the super class, so we call
+		// the super class method first
+		super.paintComponent(graphicsContext);
+
+		// set the paint color to white
+		graphicsContext.setColor(Color.WHITE);
+
+		for (AlienShip alienShip : alienShips) {
+			// get the sprite for a certain row
+			final Sprite alienSprite = spriteFactory.getAlienSprite(alienShip.getRow());
+			// draw the alien ship sprite
+			alienSprite.draw(graphicsContext, alienShip.getX(), alienShip.getY());
 		}
 
 		Sprite playerSprite = spriteFactory.getPlayerSprite();
 		playerSprite.draw(graphicsContext, playerShip.getX(), playerShip.getY());
 		
 		// draw the laser bullet (only if fired)
-		if(playerShip.hasLaserFired()) {
-			graphicsContext.fillOval(playerShip.getLaserX(), playerShip.getLaserY(), 5, 5);
+		Laser laser = playerShip.getLaser();
+		if(laser != null) {
+			graphicsContext.fillOval(laser.getX(), laser.getY(), 5, 5);
 		}
 		
 		// draw the bullet of the alien ship
-		// --- add your code here ---
+		for (AlienShip alienShip : alienShips) {
+			Laser alienLaser = alienShip.getLaser();
+			if (alienLaser != null) {
+				graphicsContext.fillOval(alienLaser.getX(), alienLaser.getY(), 5, 5);
+			}
+		}
 	}
 
 	// is called as soon as we start the new thread
@@ -126,19 +145,20 @@ public class GamePanel extends JPanel implements Runnable {
 			// update the game
 			playerShip.update();
 			
-			// if there is no bullet of a alien ship:
-			// --- add your code here ---
+			boolean alienLaserFired = false;
+			for (AlienShip alienShip : alienShips) {
+				alienShip.update();
+				if (alienShip.getLaser() != null) {
+					alienLaserFired = true;
+				}
+			}
 			
-			// randomly select a alien ship to fire back
-			Random random = new Random();
-			int playerShipNumber = random.nextInt(54);
-			
-			// calculate the start coordinates for the bullet of the alien ship
-			// --- add your code here ---
-			
-			// if there is a bullet of a alien ship:
-			// update the laser bullet coordinates
-			// --- add your code here ---
+			if (!alienLaserFired) {
+				// randomly select a alien ship to fire back
+				Random random = new Random();
+				int alienShipNumber = random.nextInt(alienShips.size() - 1);
+				alienShips.get(alienShipNumber).fire();
+			}
 			
 			// repaint the panel
 			repaint();

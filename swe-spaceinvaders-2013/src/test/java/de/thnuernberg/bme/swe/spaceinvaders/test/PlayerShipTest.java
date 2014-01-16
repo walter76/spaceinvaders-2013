@@ -3,6 +3,7 @@ package de.thnuernberg.bme.swe.spaceinvaders.test;
 import org.junit.Test;
 import org.junit.Assert;
 
+import de.thnuernberg.bme.swe.spaceinvaders.Laser;
 import de.thnuernberg.bme.swe.spaceinvaders.PlayerShip;
 
 public class PlayerShipTest {
@@ -100,7 +101,7 @@ public class PlayerShipTest {
 		final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH, PANEL_HEIGHT,
 				SPACING);
 
-		Assert.assertFalse(playerShip.hasLaserFired());
+		Assert.assertNull(playerShip.getLaser());
 	}
 
 	@Test
@@ -110,7 +111,7 @@ public class PlayerShipTest {
 
 		playerShip.fire();
 
-		Assert.assertTrue(playerShip.hasLaserFired());
+		Assert.assertNotNull(playerShip.getLaser());
 	}
 
 	@Test
@@ -121,8 +122,9 @@ public class PlayerShipTest {
 		playerShip.resetToStartPosition();
 		playerShip.fire();
 
-		Assert.assertEquals(playerShip.getX(), playerShip.getLaserX());
-		Assert.assertEquals(playerShip.getY(), playerShip.getLaserY());
+		Laser laser = playerShip.getLaser();
+		Assert.assertEquals(playerShip.getX(), laser.getX());
+		Assert.assertEquals(playerShip.getY(), laser.getY());
 	}
 
 	@Test
@@ -132,28 +134,26 @@ public class PlayerShipTest {
 
 		playerShip.resetToStartPosition();
 		playerShip.fire();
-		final int startLaserX = playerShip.getLaserX();
-		final int startLaserY = playerShip.getLaserY();
+		final int startLaserX = playerShip.getLaser().getX();
+		final int startLaserY = playerShip.getLaser().getY();
 
 		playerShip.update();
 
-		Assert.assertEquals(startLaserX, playerShip.getLaserX());
-		Assert.assertEquals(startLaserY - 5, playerShip.getLaserY());
+		Laser laser = playerShip.getLaser();
+		Assert.assertEquals(startLaserX, laser.getX());
+		Assert.assertEquals(startLaserY - 5, laser.getY());
 	}
 
 	@Test
 	public void updateLaserNotFired() {
 		final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH, PANEL_HEIGHT,
 				SPACING);
-
+		
 		playerShip.resetToStartPosition();
-		final int startLaserX = playerShip.getLaserX();
-		final int startLaserY = playerShip.getLaserY();
-
+		
 		playerShip.update();
 
-		Assert.assertEquals(startLaserX, playerShip.getLaserX());
-		Assert.assertEquals(startLaserY, playerShip.getLaserY());
+		Assert.assertNull(playerShip.getLaser());
 	}
 
 	@Test
@@ -165,11 +165,11 @@ public class PlayerShipTest {
 		playerShip.resetToStartPosition();
 		playerShip.fire();
 
-		Assert.assertTrue(playerShip.hasLaserFired());
+		Assert.assertNotNull(playerShip.getLaser());
 
 		playerShip.update();
 
-		Assert.assertFalse(playerShip.hasLaserFired());
+		Assert.assertNull(playerShip.getLaser());
 	}
 
 }

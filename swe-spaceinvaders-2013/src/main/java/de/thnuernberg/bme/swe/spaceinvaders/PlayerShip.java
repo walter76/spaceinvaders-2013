@@ -3,6 +3,8 @@ package de.thnuernberg.bme.swe.spaceinvaders;
 public class PlayerShip {
 
 	public static final int VELOCITY = 5;
+	private static final int WIDTH = 25;
+	private static final int HEIGHT = 20;
 	
 	private final int panelWidth;
 	private final int panelHeight;
@@ -10,16 +12,8 @@ public class PlayerShip {
 	
 	private int x;
 	private int y;
-	private int laserX;
-	private int laserY;
-	private boolean laserFired;
+	private Laser laser;
 
-	public PlayerShip(final int panelWidth, final int panelHeight, final int spacing) {
-		this.panelWidth = panelWidth;
-		this.panelHeight = panelHeight;
-		this.spacing = spacing;
-	}
-	
 	public int getX() {
 		return x;
 	}
@@ -28,13 +22,23 @@ public class PlayerShip {
 		return y;
 	}
 
+	public Laser getLaser() {
+		return laser;
+	}
+	
+	public PlayerShip(final int panelWidth, final int panelHeight, final int spacing) {
+		this.panelWidth = panelWidth;
+		this.panelHeight = panelHeight;
+		this.spacing = spacing;
+	}
+	
 	public void resetToStartPosition() {
-		x = (panelWidth - 25) / 2 - spacing;
+		x = (panelWidth - WIDTH) / 2 - spacing;
 		if (x < 0) {
 			x = 0;
 		}
 		
-		y = panelHeight - 20 - spacing;
+		y = panelHeight - HEIGHT - spacing;
 		if (y < 0) {
 			y = 0;
 		}
@@ -42,8 +46,8 @@ public class PlayerShip {
 	
 	public void moveRight() {
 		x += VELOCITY;
-		if (x > (panelWidth - 25 - spacing)) {
-			x = panelWidth - 25 - spacing;
+		if (x > (panelWidth - WIDTH - spacing)) {
+			x = panelWidth - WIDTH - spacing;
 		}
 	}
 
@@ -53,30 +57,18 @@ public class PlayerShip {
 			x = spacing;
 		}
 	}
-	
+
 	public void fire() {
-		laserFired = true;
-		laserX = x;
-		laserY = y;
+		if (laser == null) {
+			laser = new Laser(x + (WIDTH - 5) / 2, y - 5);
+		}
 	}
-	
-	public boolean hasLaserFired() {
-		return laserFired;
-	}
-	
-	public int getLaserX() {
-		return laserX;
-	}
-	
-	public int getLaserY() {
-		return laserY;
-	}
-	
+
 	public void update() {
-		if (laserFired) {
-			laserY -= 5;
-			if (laserY < 0) {
-				laserFired = false;
+		if (laser != null) {
+			laser.moveUp();
+			if (laser.getY() < spacing) {
+				laser = null;
 			}
 		}
 	}
