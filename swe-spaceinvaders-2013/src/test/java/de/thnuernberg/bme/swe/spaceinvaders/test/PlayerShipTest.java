@@ -172,4 +172,18 @@ public class PlayerShipTest {
 		Assert.assertNull(playerShip.getLaser());
 	}
 
+	@Test
+	public void fireTwice() {
+		final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH, PANEL_HEIGHT,
+				SPACING);
+
+		playerShip.fire();
+		
+		Laser laser = playerShip.getLaser();
+		
+		playerShip.fire();
+
+		Assert.assertEquals(laser, playerShip.getLaser());
+	}
+	
 }
