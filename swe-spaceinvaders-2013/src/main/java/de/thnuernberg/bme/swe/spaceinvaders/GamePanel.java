@@ -11,6 +11,7 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 
+import de.thnuernberg.bme.swe.spaceinvaders.model.AlienShip;
 import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
 
 public class GamePanel extends JPanel implements Runnable {
@@ -26,14 +27,15 @@ public class GamePanel extends JPanel implements Runnable {
 	private final SpriteFactory spriteFactory = new SpriteFactory();
 
 	// player ship
-	private final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH, PANEL_HEIGHT, SPACING);
-	
+	private final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH,
+			PANEL_HEIGHT, SPACING);
+
 	// flag to indicate whether the game is running or not
 	private boolean gameRunning;
-	
+
 	// list of alien ships
-	private final List<AlienShip> alienShips = new ArrayList<AlienShip>();
-	
+	private final List<AlienShipController> alienShips = new ArrayList<AlienShipController>();
+
 	public GamePanel() {
 		// set the background color to black
 		setBackground(Color.BLACK);
@@ -88,13 +90,14 @@ public class GamePanel extends JPanel implements Runnable {
 			for (int i = 0; i < 11; i++) {
 				// for every alien ship we calculate its x-position
 				final int x = SPACING + i * (SPACING + width);
-				
+
 				// add the alien ship to the collection
-				alienShips.add(new AlienShip(x, y, width, height, row, PANEL_HEIGHT, SPACING));
+				alienShips.add(new AlienShipController(new AlienShip(x, y,
+						width, height, row), PANEL_HEIGHT, SPACING));
 			}
 		}
 	}
-	
+
 	// we override this method to be able to draw in the game panel
 	// it is called by swing every time the game panel is redrawn
 	@Override
@@ -106,27 +109,32 @@ public class GamePanel extends JPanel implements Runnable {
 		// set the paint color to white
 		graphicsContext.setColor(Color.WHITE);
 
-		for (AlienShip alienShip : alienShips) {
+		for (AlienShipController alienShipController : alienShips) {
+			AlienShip alienShip = alienShipController.getAlienShip();
 			// get the sprite for a certain row
-			final Sprite alienSprite = spriteFactory.getAlienSprite(alienShip.getRow());
+			final Sprite alienSprite = spriteFactory.getAlienSprite(alienShip
+					.getRow());
 			// draw the alien ship sprite
-			alienSprite.draw(graphicsContext, alienShip.getX(), alienShip.getY());
+			alienSprite.draw(graphicsContext, alienShip.getX(),
+					alienShip.getY());
 		}
 
 		Sprite playerSprite = spriteFactory.getPlayerSprite();
-		playerSprite.draw(graphicsContext, playerShip.getX(), playerShip.getY());
-		
+		playerSprite
+				.draw(graphicsContext, playerShip.getX(), playerShip.getY());
+
 		// draw the laser bullet (only if fired)
 		Laser laser = playerShip.getLaser();
-		if(laser != null) {
+		if (laser != null) {
 			graphicsContext.fillOval(laser.getX(), laser.getY(), 5, 5);
 		}
-		
+
 		// draw the bullet of the alien ship
-		for (AlienShip alienShip : alienShips) {
-			Laser alienLaser = alienShip.getLaser();
+		for (AlienShipController alienShipController : alienShips) {
+			Laser alienLaser = alienShipController.getLaser();
 			if (alienLaser != null) {
-				graphicsContext.fillOval(alienLaser.getX(), alienLaser.getY(), 5, 5);
+				graphicsContext.fillOval(alienLaser.getX(), alienLaser.getY(),
+						5, 5);
 			}
 		}
 	}
@@ -136,32 +144,32 @@ public class GamePanel extends JPanel implements Runnable {
 	@Override
 	public void run() {
 		// as long as gameRunning is true, the game loop is running
-		while(gameRunning) {
+		while (gameRunning) {
 			// we sleep 100 ms letting other threads do something
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// ignored
 			}
-			
+
 			// update the game
 			playerShip.update();
-			
+
 			boolean alienLaserFired = false;
-			for (AlienShip alienShip : alienShips) {
-				alienShip.update();
-				if (alienShip.getLaser() != null) {
+			for (AlienShipController alienShipController : alienShips) {
+				alienShipController.update();
+				if (alienShipController.getLaser() != null) {
 					alienLaserFired = true;
 				}
 			}
-			
+
 			if (!alienLaserFired) {
 				// randomly select a alien ship to fire back
 				Random random = new Random();
 				int alienShipNumber = random.nextInt(alienShips.size() - 1);
 				alienShips.get(alienShipNumber).fire();
 			}
-			
+
 			// repaint the panel
 			repaint();
 		}
@@ -172,7 +180,7 @@ public class GamePanel extends JPanel implements Runnable {
 	@Override
 	public void addNotify() {
 		super.addNotify();
-		
+
 		startGame();
 	}
 
@@ -187,5 +195,5 @@ public class GamePanel extends JPanel implements Runnable {
 	private void stopGame() {
 		gameRunning = false;
 	}
-	
+
 }

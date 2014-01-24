@@ -68,7 +68,7 @@ public class PlayerShip {
 
 	public void update() {
 		if (laser != null) {
-			new LaserController(laser).moveUp();
+			new LaserController(laser, LaserController.Direction.UP).update();
 			if (laser.getY() < spacing) {
 				laser = null;
 			}

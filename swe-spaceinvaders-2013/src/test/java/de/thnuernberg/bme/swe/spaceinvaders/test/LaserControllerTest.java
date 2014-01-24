@@ -19,26 +19,27 @@ public class LaserControllerTest {
 	@Test
 	public void initialization() {
 		Laser laser = new Laser(LASER_X, LASER_Y);
-		LaserController laserController = new LaserController(laser);
+		LaserController laserController = new LaserController(laser, LaserController.Direction.UP);
 		
 		Assert.assertEquals(laser, laserController.getLaser());
+		Assert.assertEquals(LaserController.Direction.UP, laserController.getDirection());
 	}
 	
 	@Test
-	public void moveUp() {
-		LaserController laserController = new LaserController(new Laser(LASER_X, LASER_Y));
+	public void updateMoveUp() {
+		LaserController laserController = new LaserController(new Laser(LASER_X, LASER_Y), LaserController.Direction.UP);
 
-		laserController.moveUp();
+		laserController.update();
 
 		Assert.assertEquals(LASER_X, laserController.getLaser().getX());
 		Assert.assertEquals(LASER_Y - LaserController.VELOCITY, laserController.getLaser().getY());
 	}
 
 	@Test
-	public void moveDown() {
-		LaserController laserController = new LaserController(new Laser(LASER_X, LASER_Y));
+	public void updateMoveDown() {
+		LaserController laserController = new LaserController(new Laser(LASER_X, LASER_Y), LaserController.Direction.DOWN);
 
-		laserController.moveDown();
+		laserController.update();
 
 		Assert.assertEquals(LASER_X, laserController.getLaser().getX());
 		Assert.assertEquals(LASER_Y + LaserController.VELOCITY, laserController.getLaser().getY());
