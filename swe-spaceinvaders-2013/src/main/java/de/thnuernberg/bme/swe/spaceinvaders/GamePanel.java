@@ -13,6 +13,7 @@ import javax.swing.JPanel;
 
 import de.thnuernberg.bme.swe.spaceinvaders.model.AlienShip;
 import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
+import de.thnuernberg.bme.swe.spaceinvaders.model.PlayerShip;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -27,8 +28,8 @@ public class GamePanel extends JPanel implements Runnable {
 	private final SpriteFactory spriteFactory = new SpriteFactory();
 
 	// player ship
-	private final PlayerShip playerShip = new PlayerShip(PANEL_WIDTH,
-			PANEL_HEIGHT, SPACING);
+	private final PlayerShipController playerShipController = new PlayerShipController(
+			new PlayerShip(), PANEL_WIDTH, PANEL_HEIGHT, SPACING);
 
 	// flag to indicate whether the game is running or not
 	private boolean gameRunning;
@@ -51,7 +52,7 @@ public class GamePanel extends JPanel implements Runnable {
 		addKeyListener();
 
 		createAlienShips();
-		playerShip.resetToStartPosition();
+		playerShipController.resetToStartPosition();
 	}
 
 	private void addKeyListener() {
@@ -62,13 +63,13 @@ public class GamePanel extends JPanel implements Runnable {
 					stopGame();
 				} else if (e.getKeyChar() == 'a') {
 					// move the player to the left on key 'a'
-					playerShip.moveLeft();
+					playerShipController.moveLeft();
 				} else if (e.getKeyChar() == 'd') {
 					// move the player to the right on key 'd'
-					playerShip.moveRight();
+					playerShipController.moveRight();
 				} else if (e.getKeyChar() == ' ') {
 					// shoot a laser bullet
-					playerShip.fire();
+					playerShipController.fire();
 				}
 				// repaint the panel
 				repaint();
@@ -120,11 +121,11 @@ public class GamePanel extends JPanel implements Runnable {
 		}
 
 		Sprite playerSprite = spriteFactory.getPlayerSprite();
-		playerSprite
-				.draw(graphicsContext, playerShip.getX(), playerShip.getY());
+		playerSprite.draw(graphicsContext, playerShipController.getPlayerShip()
+				.getX(), playerShipController.getPlayerShip().getY());
 
 		// draw the laser bullet (only if fired)
-		Laser laser = playerShip.getLaser();
+		Laser laser = playerShipController.getLaser();
 		if (laser != null) {
 			graphicsContext.fillOval(laser.getX(), laser.getY(), 5, 5);
 		}
@@ -153,7 +154,7 @@ public class GamePanel extends JPanel implements Runnable {
 			}
 
 			// update the game
-			playerShip.update();
+			playerShipController.update();
 
 			boolean alienLaserFired = false;
 			for (AlienShipController alienShipController : alienShips) {
