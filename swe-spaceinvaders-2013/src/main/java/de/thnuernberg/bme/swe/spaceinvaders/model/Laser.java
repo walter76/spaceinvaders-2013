@@ -1,16 +1,22 @@
-package de.thnuernberg.bme.swe.spaceinvaders;
+package de.thnuernberg.bme.swe.spaceinvaders.model;
 
 public class Laser {
 
-	public static final int VELOCITY = 5;
-	
 	private int x;
 	private int y;
 
+	public void setX(final int x) {
+		this.x = x;
+	}
+	
 	public int getX() {
 		return x;
 	}
 
+	public void setY(final int y) {
+		this.y = y;
+	}
+	
 	public int getY() {
 		return y;
 	}
@@ -20,12 +26,4 @@ public class Laser {
 		this.y = y;
 	}
 
-	public void moveUp() {
-		y -= VELOCITY;
-	}
-	
-	public void moveDown() {
-		y += VELOCITY;
-	}
-	
 }

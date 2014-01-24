@@ -1,5 +1,7 @@
 package de.thnuernberg.bme.swe.spaceinvaders;
 
+import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
+
 public class PlayerShip {
 
 	public static final int VELOCITY = 5;
@@ -66,7 +68,7 @@ public class PlayerShip {
 
 	public void update() {
 		if (laser != null) {
-			laser.moveUp();
+			new LaserController(laser).moveUp();
 			if (laser.getY() < spacing) {
 				laser = null;
 			}

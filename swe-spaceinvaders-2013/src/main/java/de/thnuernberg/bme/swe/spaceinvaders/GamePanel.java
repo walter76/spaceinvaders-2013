@@ -11,6 +11,8 @@ import java.util.Random;
 
 import javax.swing.JPanel;
 
+import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
+
 public class GamePanel extends JPanel implements Runnable {
 
 	private static final long serialVersionUID = 1L;

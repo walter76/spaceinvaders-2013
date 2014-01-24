@@ -3,8 +3,8 @@ package de.thnuernberg.bme.swe.spaceinvaders.test;
 import org.junit.Test;
 import org.junit.Assert;
 
-import de.thnuernberg.bme.swe.spaceinvaders.Laser;
 import de.thnuernberg.bme.swe.spaceinvaders.PlayerShip;
+import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
 
 public class PlayerShipTest {
 

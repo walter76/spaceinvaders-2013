@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.thnuernberg.bme.swe.spaceinvaders.AlienShip;
-import de.thnuernberg.bme.swe.spaceinvaders.Laser;
+import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
 
 public class AlienShipTest {
 

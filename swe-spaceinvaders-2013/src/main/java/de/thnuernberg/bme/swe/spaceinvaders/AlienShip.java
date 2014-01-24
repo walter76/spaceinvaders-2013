@@ -1,5 +1,7 @@
 package de.thnuernberg.bme.swe.spaceinvaders;
 
+import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
+
 public class AlienShip {
 
 	private final int panelHeight;
@@ -54,7 +56,7 @@ public class AlienShip {
 
 	public void update() {
 		if (laser != null) {
-			laser.moveDown();
+			new LaserController(laser).moveDown();
 			if (laser.getY() > (panelHeight - spacing)) {
 				laser = null;
 			}
