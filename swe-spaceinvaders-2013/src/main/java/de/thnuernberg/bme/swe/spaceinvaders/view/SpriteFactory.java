@@ -1,4 +1,4 @@
-package de.thnuernberg.bme.swe.spaceinvaders;
+package de.thnuernberg.bme.swe.spaceinvaders.view;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

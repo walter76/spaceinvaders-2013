@@ -2,9 +2,13 @@ package de.thnuernberg.bme.swe.spaceinvaders.test;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
+import de.thnuernberg.bme.swe.spaceinvaders.BouncingBoundaryGuard;
+import de.thnuernberg.bme.swe.spaceinvaders.BoundaryGuard;
 import de.thnuernberg.bme.swe.spaceinvaders.PlayerShipController;
 import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
+import de.thnuernberg.bme.swe.spaceinvaders.model.MoveableGameObject;
 import de.thnuernberg.bme.swe.spaceinvaders.model.PlayerShip;
 
 public class PlayerShipControllerTest {
@@ -15,11 +19,13 @@ public class PlayerShipControllerTest {
 
 	@Test
 	public void resetToStartPosition() {
-		final PlayerShip playerShip = new PlayerShip();
+		final MoveableGameObject playerShip = new PlayerShip();
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
 		final PlayerShipController playerShipController = new PlayerShipController(
-				playerShip, PANEL_WIDTH, PANEL_HEIGHT, SPACING);
+				playerShip, boundaryGuard, SPACING);
 
-		playerShipController.resetToStartPosition();
+		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT);
 
 		Assert.assertEquals(35, playerShip.getX());
 		Assert.assertEquals(75, playerShip.getY());
@@ -29,11 +35,13 @@ public class PlayerShipControllerTest {
 	public void resetToStartPositionPanelSizeTooSmall() {
 		final int panelWidth = 35;
 		final int panelHeight = 20;
-		final PlayerShip playerShip = new PlayerShip();
+		final MoveableGameObject playerShip = new PlayerShip();
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
 		final PlayerShipController playerShipController = new PlayerShipController(
-				playerShip, panelWidth, panelHeight, SPACING);
+				playerShip, boundaryGuard, SPACING);
 
-		playerShipController.resetToStartPosition();
+		playerShipController.resetToStartPosition(panelWidth, panelHeight);
 
 		Assert.assertEquals(0, playerShip.getX());
 		Assert.assertEquals(0, playerShip.getY());
@@ -41,11 +49,13 @@ public class PlayerShipControllerTest {
 
 	@Test
 	public void moveRight() {
-		final PlayerShip playerShip = new PlayerShip();
+		final MoveableGameObject playerShip = new PlayerShip();
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
 		final PlayerShipController playerShipController = new PlayerShipController(
-				playerShip, PANEL_WIDTH, PANEL_HEIGHT, SPACING);
+				playerShip, boundaryGuard, SPACING);
 
-		playerShipController.resetToStartPosition();
+		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT);
 
 		final int startX = playerShip.getX();
 		final int startY = playerShip.getY();
@@ -59,11 +69,13 @@ public class PlayerShipControllerTest {
 
 	@Test
 	public void moveLeft() {
-		final PlayerShip playerShip = new PlayerShip();
+		final MoveableGameObject playerShip = new PlayerShip();
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
 		final PlayerShipController playerShipController = new PlayerShipController(
-				playerShip, PANEL_WIDTH, PANEL_HEIGHT, SPACING);
+				playerShip, boundaryGuard, SPACING);
 
-		playerShipController.resetToStartPosition();
+		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT);
 
 		final int startX = playerShip.getX();
 		final int startY = playerShip.getY();
@@ -76,47 +88,49 @@ public class PlayerShipControllerTest {
 	}
 
 	@Test
-	public void moveRightOutOfBounds() {
-		final int panelWidth = 30;
-		final PlayerShip playerShip = new PlayerShip();
+	public void moveRightUsesBoundaryGuard() {
+		final MoveableGameObject playerShip = new PlayerShip();
+		final BoundaryGuard boundaryGuard = Mockito.mock(BoundaryGuard.class);
 		final PlayerShipController playerShipController = new PlayerShipController(
-				playerShip, panelWidth, PANEL_HEIGHT, SPACING);
+				playerShip, boundaryGuard, SPACING);
 
-		playerShipController.resetToStartPosition();
-		final int startX = playerShip.getX();
+		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT);
 
 		playerShipController.moveRight();
 
-		Assert.assertEquals(startX, playerShip.getX());
+		Mockito.verify(boundaryGuard).checkBoundaries(playerShip);
 	}
 
 	@Test
-	public void moveLeftOutOfBounds() {
-		final int panelWidth = 45;
-		final PlayerShip playerShip = new PlayerShip();
+	public void moveLeftUsesBoundaryGuard() {
+		final MoveableGameObject playerShip = new PlayerShip();
+		final BoundaryGuard boundaryGuard = Mockito.mock(BoundaryGuard.class);
 		final PlayerShipController playerShipController = new PlayerShipController(
-				playerShip, panelWidth, PANEL_HEIGHT, SPACING);
+				playerShip, boundaryGuard, SPACING);
 
-		playerShipController.resetToStartPosition();
-		final int startX = playerShip.getX();
+		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT);
 
 		playerShipController.moveLeft();
 
-		Assert.assertEquals(startX, playerShip.getX());
+		Mockito.verify(boundaryGuard).checkBoundaries(playerShip);
 	}
 
 	@Test
 	public void laserNotFired() {
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
 		final PlayerShipController playerShipController = new PlayerShipController(
-				new PlayerShip(), PANEL_WIDTH, PANEL_HEIGHT, SPACING);
+				new PlayerShip(), boundaryGuard, SPACING);
 
 		Assert.assertNull(playerShipController.getLaser());
 	}
 
 	@Test
 	public void fireLaser() {
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
 		final PlayerShipController playerShipController = new PlayerShipController(
-				new PlayerShip(), PANEL_WIDTH, PANEL_HEIGHT, SPACING);
+				new PlayerShip(), boundaryGuard, SPACING);
 
 		playerShipController.fire();
 
@@ -125,25 +139,30 @@ public class PlayerShipControllerTest {
 
 	@Test
 	public void fireLaserInitialLaserBulletPosition() {
-		final PlayerShip playerShip = new PlayerShip();
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
+		final MoveableGameObject playerShip = new PlayerShip();
 		final PlayerShipController playerShipController = new PlayerShipController(
-				playerShip, PANEL_WIDTH, PANEL_HEIGHT, SPACING);
+				playerShip, boundaryGuard, SPACING);
 
-		playerShipController.resetToStartPosition();
+		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT);
 		playerShipController.fire();
 
 		Laser laser = playerShipController.getLaser();
-		Assert.assertEquals(playerShip.getX()
-				+ (PlayerShipController.WIDTH - 5) / 2, laser.getX());
+		Assert.assertEquals(
+				playerShip.getX() + (playerShip.getWidth() - 5) / 2,
+				laser.getX());
 		Assert.assertEquals(playerShip.getY() - 5, laser.getY());
 	}
 
 	@Test
 	public void updateAfterLaserFired() {
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
 		final PlayerShipController playerShipController = new PlayerShipController(
-				new PlayerShip(), PANEL_WIDTH, PANEL_HEIGHT, SPACING);
+				new PlayerShip(), boundaryGuard, SPACING);
 
-		playerShipController.resetToStartPosition();
+		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT);
 		playerShipController.fire();
 		final int startLaserX = playerShipController.getLaser().getX();
 		final int startLaserY = playerShipController.getLaser().getY();
@@ -157,10 +176,12 @@ public class PlayerShipControllerTest {
 
 	@Test
 	public void updateLaserNotFired() {
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
 		final PlayerShipController playerShipController = new PlayerShipController(
-				new PlayerShip(), PANEL_WIDTH, PANEL_HEIGHT, SPACING);
+				new PlayerShip(), boundaryGuard, SPACING);
 
-		playerShipController.resetToStartPosition();
+		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT);
 
 		playerShipController.update();
 
@@ -170,10 +191,12 @@ public class PlayerShipControllerTest {
 	@Test
 	public void updateLaserOutOfBounds() {
 		final int panelHeight = 20;
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, panelHeight - SPACING);
 		final PlayerShipController playerShipController = new PlayerShipController(
-				new PlayerShip(), PANEL_WIDTH, panelHeight, SPACING);
+				new PlayerShip(), boundaryGuard, SPACING);
 
-		playerShipController.resetToStartPosition();
+		playerShipController.resetToStartPosition(PANEL_WIDTH, panelHeight);
 		playerShipController.fire();
 
 		Assert.assertNotNull(playerShipController.getLaser());
@@ -185,8 +208,10 @@ public class PlayerShipControllerTest {
 
 	@Test
 	public void fireTwice() {
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
 		final PlayerShipController playerShipController = new PlayerShipController(
-				new PlayerShip(), PANEL_WIDTH, PANEL_HEIGHT, SPACING);
+				new PlayerShip(), boundaryGuard, SPACING);
 
 		playerShipController.fire();
 

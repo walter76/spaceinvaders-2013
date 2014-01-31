@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 import de.thnuernberg.bme.swe.spaceinvaders.model.AlienShip;
 import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
 import de.thnuernberg.bme.swe.spaceinvaders.model.PlayerShip;
+import de.thnuernberg.bme.swe.spaceinvaders.view.Sprite;
+import de.thnuernberg.bme.swe.spaceinvaders.view.SpriteFactory;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -28,8 +30,7 @@ public class GamePanel extends JPanel implements Runnable {
 	private final SpriteFactory spriteFactory = new SpriteFactory();
 
 	// player ship
-	private final PlayerShipController playerShipController = new PlayerShipController(
-			new PlayerShip(), PANEL_WIDTH, PANEL_HEIGHT, SPACING);
+	private final PlayerShipController playerShipController;
 
 	// flag to indicate whether the game is running or not
 	private boolean gameRunning;
@@ -38,6 +39,11 @@ public class GamePanel extends JPanel implements Runnable {
 	private final List<AlienShipController> alienShips = new ArrayList<AlienShipController>();
 
 	public GamePanel() {
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
+		playerShipController = new PlayerShipController(new PlayerShip(),
+				boundaryGuard, SPACING);
+
 		// set the background color to black
 		setBackground(Color.BLACK);
 
@@ -52,7 +58,7 @@ public class GamePanel extends JPanel implements Runnable {
 		addKeyListener();
 
 		createAlienShips();
-		playerShipController.resetToStartPosition();
+		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT);
 	}
 
 	private void addKeyListener() {

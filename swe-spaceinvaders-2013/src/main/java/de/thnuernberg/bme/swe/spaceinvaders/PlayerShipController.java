@@ -1,17 +1,14 @@
 package de.thnuernberg.bme.swe.spaceinvaders;
 
 import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
-import de.thnuernberg.bme.swe.spaceinvaders.model.PlayerShip;
+import de.thnuernberg.bme.swe.spaceinvaders.model.MoveableGameObject;
 
 public class PlayerShipController {
 
 	public static final int VELOCITY = 5;
-	public static final int WIDTH = 25;
-	public static final int HEIGHT = 20;
 
-	private final PlayerShip playerShip;
-	private final int panelWidth;
-	private final int panelHeight;
+	private final MoveableGameObject playerShip;
+	private final BoundaryGuard boundaryGuard;
 	private final int spacing;
 
 	private Laser laser;
@@ -20,25 +17,24 @@ public class PlayerShipController {
 		return laser;
 	}
 
-	public PlayerShip getPlayerShip() {
+	public MoveableGameObject getPlayerShip() {
 		return playerShip;
 	}
 
-	public PlayerShipController(final PlayerShip playerShip,
-			final int panelWidth, final int panelHeight, final int spacing) {
+	public PlayerShipController(final MoveableGameObject playerShip,
+			final BoundaryGuard boundaryGuard, final int spacing) {
 		this.playerShip = playerShip;
-		this.panelWidth = panelWidth;
-		this.panelHeight = panelHeight;
+		this.boundaryGuard = boundaryGuard;
 		this.spacing = spacing;
 	}
 
-	public void resetToStartPosition() {
-		playerShip.setX((panelWidth - WIDTH) / 2 - spacing);
+	public void resetToStartPosition(final int panelWidth, final int panelHeight) {
+		playerShip.setX((panelWidth - playerShip.getWidth()) / 2 - spacing);
 		if (playerShip.getX() < 0) {
 			playerShip.setX(0);
 		}
 
-		playerShip.setY(panelHeight - HEIGHT - spacing);
+		playerShip.setY(panelHeight - playerShip.getHeight() - spacing);
 		if (playerShip.getY() < 0) {
 			playerShip.setY(0);
 		}
@@ -47,25 +43,21 @@ public class PlayerShipController {
 	public void moveRight() {
 		int x = playerShip.getX();
 		x += VELOCITY;
-		if (x > (panelWidth - WIDTH - spacing)) {
-			x = panelWidth - WIDTH - spacing;
-		}
 		playerShip.setX(x);
+		boundaryGuard.checkBoundaries(playerShip);
 	}
 
 	public void moveLeft() {
 		int x = playerShip.getX();
 		x -= VELOCITY;
-		if (x < spacing) {
-			x = spacing;
-		}
 		playerShip.setX(x);
+		boundaryGuard.checkBoundaries(playerShip);
 	}
 
 	public void fire() {
 		if (laser == null) {
-			laser = new Laser(playerShip.getX() + (WIDTH - 5) / 2,
-					playerShip.getY() - 5);
+			laser = new Laser(playerShip.getX() + (playerShip.getWidth() - 5)
+					/ 2, playerShip.getY() - 5);
 		}
 	}
 
