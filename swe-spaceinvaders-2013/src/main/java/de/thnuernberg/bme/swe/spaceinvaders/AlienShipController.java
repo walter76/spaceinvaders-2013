@@ -6,9 +6,8 @@ import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
 public class AlienShipController {
 
 	private final AlienShip alienShip;
-	private final int panelHeight;
-	private final int spacing;
-	
+	private final BoundaryGuard boundaryGuard;
+
 	private Laser laser;
 
 	public Laser getLaser() {
@@ -18,11 +17,11 @@ public class AlienShipController {
 	public AlienShip getAlienShip() {
 		return alienShip;
 	}
-	
-	public AlienShipController(final AlienShip alienShip, int panelHeight, int spacing) {
+
+	public AlienShipController(final AlienShip alienShip,
+			final BoundaryGuard boundaryGuard) {
 		this.alienShip = alienShip;
-		this.panelHeight = panelHeight;
-		this.spacing = spacing;
+		this.boundaryGuard = boundaryGuard;
 	}
 
 	public void fire() {
@@ -36,7 +35,7 @@ public class AlienShipController {
 	public void update() {
 		if (laser != null) {
 			new LaserController(laser, LaserController.Direction.DOWN).update();
-			if (laser.getY() > (panelHeight - spacing)) {
+			if (boundaryGuard.isOutOfBounds(laser)) {
 				laser = null;
 			}
 		}

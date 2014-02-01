@@ -42,7 +42,7 @@ public class GamePanel extends JPanel implements Runnable {
 		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
 				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
 		playerShipController = new PlayerShipController(new PlayerShip(),
-				boundaryGuard, SPACING);
+				boundaryGuard);
 
 		// set the background color to black
 		setBackground(Color.BLACK);
@@ -58,7 +58,8 @@ public class GamePanel extends JPanel implements Runnable {
 		addKeyListener();
 
 		createAlienShips();
-		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT);
+		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT,
+				SPACING);
 	}
 
 	private void addKeyListener() {
@@ -84,6 +85,9 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 
 	private void createAlienShips() {
+		BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
+
 		// declare width, height and spacing
 		final int width = 25;
 		final int height = 20;
@@ -100,7 +104,7 @@ public class GamePanel extends JPanel implements Runnable {
 
 				// add the alien ship to the collection
 				alienShips.add(new AlienShipController(new AlienShip(x, y,
-						width, height, row), PANEL_HEIGHT, SPACING));
+						width, height, row), boundaryGuard));
 			}
 		}
 	}

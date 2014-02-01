@@ -2,34 +2,40 @@ package de.thnuernberg.bme.swe.spaceinvaders.test;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import de.thnuernberg.bme.swe.spaceinvaders.AlienShipController;
+import de.thnuernberg.bme.swe.spaceinvaders.BoundaryGuard;
 import de.thnuernberg.bme.swe.spaceinvaders.model.AlienShip;
 import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
+import de.thnuernberg.bme.swe.spaceinvaders.model.MoveableGameObject;
 
 public class AlienShipControllerTest {
 
 	@Test
 	public void initialParameters() {
 		AlienShip alienShip = new AlienShip(10, 20, 30, 40, 1);
+		BoundaryGuard boundaryGuard = Mockito.mock(BoundaryGuard.class);
 		AlienShipController alienShipController = new AlienShipController(
-				alienShip, 500, 25);
+				alienShip, boundaryGuard);
 
 		Assert.assertEquals(alienShip, alienShipController.getAlienShip());
 	}
 
 	@Test
 	public void laserIsInitiallyNull() {
+		BoundaryGuard boundaryGuard = Mockito.mock(BoundaryGuard.class);
 		AlienShipController alienShipController = new AlienShipController(
-				new AlienShip(10, 20, 30, 40, 1), 500, 25);
+				new AlienShip(10, 20, 30, 40, 1), boundaryGuard);
 
 		Assert.assertNull(alienShipController.getLaser());
 	}
 
 	@Test
 	public void fire() {
+		BoundaryGuard boundaryGuard = Mockito.mock(BoundaryGuard.class);
 		AlienShipController alienShipController = new AlienShipController(
-				new AlienShip(10, 20, 30, 40, 1), 500, 25);
+				new AlienShip(10, 20, 30, 40, 1), boundaryGuard);
 
 		alienShipController.fire();
 
@@ -41,8 +47,12 @@ public class AlienShipControllerTest {
 
 	@Test
 	public void updateMovesDown() {
+		BoundaryGuard boundaryGuard = Mockito.mock(BoundaryGuard.class);
+		Mockito.when(
+				boundaryGuard.isOutOfBounds(Mockito
+						.any(MoveableGameObject.class))).thenReturn(false);
 		AlienShipController alienShipController = new AlienShipController(
-				new AlienShip(10, 20, 30, 40, 1), 500, 25);
+				new AlienShip(10, 20, 30, 40, 1), boundaryGuard);
 
 		alienShipController.fire();
 		alienShipController.update();
@@ -54,8 +64,12 @@ public class AlienShipControllerTest {
 
 	@Test
 	public void updateLaserResetAtLowerBounds() {
+		BoundaryGuard boundaryGuard = Mockito.mock(BoundaryGuard.class);
+		Mockito.when(
+				boundaryGuard.isOutOfBounds(Mockito
+						.any(MoveableGameObject.class))).thenReturn(true);
 		AlienShipController alienShipController = new AlienShipController(
-				new AlienShip(10, 20, 30, 45, 1), 40, 25);
+				new AlienShip(10, 20, 30, 45, 1), boundaryGuard);
 
 		alienShipController.fire();
 
@@ -68,8 +82,9 @@ public class AlienShipControllerTest {
 
 	@Test
 	public void fireTwice() {
+		BoundaryGuard boundaryGuard = Mockito.mock(BoundaryGuard.class);
 		AlienShipController alienShipController = new AlienShipController(
-				new AlienShip(10, 20, 30, 45, 1), 40, 25);
+				new AlienShip(10, 20, 30, 45, 1), boundaryGuard);
 
 		alienShipController.fire();
 
@@ -82,11 +97,14 @@ public class AlienShipControllerTest {
 
 	@Test
 	public void updateWithoutFire() {
+		BoundaryGuard boundaryGuard = Mockito.mock(BoundaryGuard.class);
 		AlienShipController alienShipController = new AlienShipController(
-				new AlienShip(10, 20, 30, 45, 1), 40, 25);
+				new AlienShip(10, 20, 30, 45, 1), boundaryGuard);
 
 		alienShipController.update();
 
+		Mockito.verify(boundaryGuard, Mockito.never()).checkBoundaries(
+				Mockito.any(MoveableGameObject.class));
 		Assert.assertNull(alienShipController.getLaser());
 	}
 

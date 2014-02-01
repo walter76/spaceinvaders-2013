@@ -9,7 +9,6 @@ public class PlayerShipController {
 
 	private final MoveableGameObject playerShip;
 	private final BoundaryGuard boundaryGuard;
-	private final int spacing;
 
 	private Laser laser;
 
@@ -22,13 +21,13 @@ public class PlayerShipController {
 	}
 
 	public PlayerShipController(final MoveableGameObject playerShip,
-			final BoundaryGuard boundaryGuard, final int spacing) {
+			final BoundaryGuard boundaryGuard) {
 		this.playerShip = playerShip;
 		this.boundaryGuard = boundaryGuard;
-		this.spacing = spacing;
 	}
 
-	public void resetToStartPosition(final int panelWidth, final int panelHeight) {
+	public void resetToStartPosition(final int panelWidth,
+			final int panelHeight, final int spacing) {
 		playerShip.setX((panelWidth - playerShip.getWidth()) / 2 - spacing);
 		if (playerShip.getX() < 0) {
 			playerShip.setX(0);
@@ -64,7 +63,7 @@ public class PlayerShipController {
 	public void update() {
 		if (laser != null) {
 			new LaserController(laser, LaserController.Direction.UP).update();
-			if (laser.getY() < spacing) {
+			if (boundaryGuard.isOutOfBounds(laser)) {
 				laser = null;
 			}
 		}
