@@ -156,25 +156,12 @@ public class GamePanel extends JPanel implements Runnable {
 			}
 
 			// update the game
-			final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(
-					SPACING, SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT
-							- SPACING);
 			if (playerLaserController != null) {
-				playerLaserController.update();
-				Laser laser = playerLaserController.getLaser();
-				if (boundaryGuard.isOutOfBounds(laser)) {
-					playerLaserController = null;
-					gameObjectsRenderer.remove(laser);
-				}
+				playerLaserController = updateLaserController(playerLaserController);
 			}
 
 			if (alienLaserController != null) {
-				alienLaserController.update();
-				Laser laser = alienLaserController.getLaser();
-				if (boundaryGuard.isOutOfBounds(laser)) {
-					alienLaserController = null;
-					gameObjectsRenderer.remove(laser);
-				}
+				alienLaserController = updateLaserController(alienLaserController);
 			} else {
 				// randomly select a alien ship to fire back
 				Random random = new Random();
@@ -188,6 +175,21 @@ public class GamePanel extends JPanel implements Runnable {
 			// repaint the panel
 			repaint();
 		}
+	}
+
+	private LaserController updateLaserController(
+			LaserController laserController) {
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
+
+		laserController.update();
+
+		Laser laser = laserController.getLaser();
+		if (boundaryGuard.isOutOfBounds(laser)) {
+			gameObjectsRenderer.remove(laser);
+			return null;
+		}
+		return laserController;
 	}
 
 	// is called by the framework as soon as the game panel is shown
