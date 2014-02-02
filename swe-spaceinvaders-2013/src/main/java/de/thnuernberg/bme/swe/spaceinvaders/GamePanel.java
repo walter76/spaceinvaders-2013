@@ -92,8 +92,7 @@ public class GamePanel extends JPanel implements Runnable {
 				final int x = SPACING + i * (SPACING + width);
 
 				// add the alien ship to the collection
-				final AlienShip alienShip = new AlienShip(x, y, width, height,
-						row);
+				final AlienShip alienShip = new AlienShip(x, y, width, height);
 				alienShips.add(new AlienShipController(alienShip));
 				final Sprite alienSprite = spriteFactory.getAlienSprite(row);
 				gameObjectsRenderer.add(alienShip, new SpriteRenderer(

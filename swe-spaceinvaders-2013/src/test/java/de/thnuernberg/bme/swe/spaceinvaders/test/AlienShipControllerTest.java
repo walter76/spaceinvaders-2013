@@ -11,7 +11,7 @@ public class AlienShipControllerTest {
 
 	@Test
 	public void initialParameters() {
-		AlienShip alienShip = new AlienShip(10, 20, 30, 40, 1);
+		AlienShip alienShip = new AlienShip(10, 20, 30, 40);
 		AlienShipController alienShipController = new AlienShipController(
 				alienShip);
 
@@ -21,7 +21,7 @@ public class AlienShipControllerTest {
 	@Test
 	public void fire() {
 		AlienShipController alienShipController = new AlienShipController(
-				new AlienShip(10, 20, 30, 40, 1));
+				new AlienShip(10, 20, 30, 40));
 
 		Laser laser = alienShipController.fire();
 
@@ -33,7 +33,7 @@ public class AlienShipControllerTest {
 	@Test
 	public void fireTwice() {
 		AlienShipController alienShipController = new AlienShipController(
-				new AlienShip(10, 20, 30, 45, 1));
+				new AlienShip(10, 20, 30, 45));
 
 		Laser firstLaser = alienShipController.fire();
 		Laser secondLaser = alienShipController.fire();

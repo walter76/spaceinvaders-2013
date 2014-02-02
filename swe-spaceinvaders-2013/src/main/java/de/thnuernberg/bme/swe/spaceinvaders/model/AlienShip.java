@@ -6,7 +6,6 @@ public class AlienShip implements GameObject {
 	private int y;
 	private int width;
 	private int height;
-	private int row;
 
 	@Override
 	public int getX() {
@@ -28,16 +27,11 @@ public class AlienShip implements GameObject {
 		return height;
 	}
 
-	public int getRow() {
-		return row;
-	}
-
-	public AlienShip(int x, int y, int width, int height, int row) {
+	public AlienShip(int x, int y, int width, int height) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.row = row;
 	}
 
 }
