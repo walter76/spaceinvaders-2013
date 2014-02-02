@@ -14,8 +14,10 @@ import javax.swing.JPanel;
 import de.thnuernberg.bme.swe.spaceinvaders.model.AlienShip;
 import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
 import de.thnuernberg.bme.swe.spaceinvaders.model.PlayerShip;
+import de.thnuernberg.bme.swe.spaceinvaders.view.GameObjectsRenderer;
 import de.thnuernberg.bme.swe.spaceinvaders.view.Sprite;
 import de.thnuernberg.bme.swe.spaceinvaders.view.SpriteFactory;
+import de.thnuernberg.bme.swe.spaceinvaders.view.SpriteRenderer;
 
 public class GamePanel extends JPanel implements Runnable {
 
@@ -28,9 +30,10 @@ public class GamePanel extends JPanel implements Runnable {
 
 	// the sprite factory provides the sprites for the game
 	private final SpriteFactory spriteFactory = new SpriteFactory();
+	private final GameObjectsRenderer gameObjectsRenderer = new GameObjectsRenderer();
 
 	// player ship
-	private final PlayerShipController playerShipController;
+	private PlayerShipController playerShipController;
 
 	// flag to indicate whether the game is running or not
 	private boolean gameRunning;
@@ -39,10 +42,6 @@ public class GamePanel extends JPanel implements Runnable {
 	private final List<AlienShipController> alienShips = new ArrayList<AlienShipController>();
 
 	public GamePanel() {
-		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
-				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
-		playerShipController = new PlayerShipController(new PlayerShip(),
-				boundaryGuard);
 
 		// set the background color to black
 		setBackground(Color.BLACK);
@@ -54,12 +53,54 @@ public class GamePanel extends JPanel implements Runnable {
 		setFocusable(true);
 		// set the focus to the game panel, to receive keyboard input
 		requestFocus();
-		// add the listener for the keyboard input
-		addKeyListener();
 
-		createAlienShips();
+		setUpPlayerShip();
+		setUpAlienShips();
 		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT,
 				SPACING);
+
+		// add the listener for the keyboard input
+		addKeyListener();
+	}
+
+	private void setUpPlayerShip() {
+		final PlayerShip playerShip = new PlayerShip();
+		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
+		playerShipController = new PlayerShipController(playerShip,
+				boundaryGuard);
+		gameObjectsRenderer.add(playerShip,
+				new SpriteRenderer(spriteFactory.getPlayerSprite()));
+	}
+
+	private void setUpAlienShips() {
+		BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
+				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
+
+		// declare width, height and spacing
+		final int width = 25;
+		final int height = 20;
+
+		// we have five rows of alien ships
+		for (int row = 0; row < 5; row++) {
+			// for every row we calculate the y-position of the ships
+			final int y = SPACING + row * (SPACING + height);
+
+			// we have 11 alien ships per row
+			for (int i = 0; i < 11; i++) {
+				// for every alien ship we calculate its x-position
+				final int x = SPACING + i * (SPACING + width);
+
+				// add the alien ship to the collection
+				final AlienShip alienShip = new AlienShip(x, y, width, height,
+						row);
+				alienShips
+						.add(new AlienShipController(alienShip, boundaryGuard));
+				final Sprite alienSprite = spriteFactory.getAlienSprite(row);
+				gameObjectsRenderer.add(alienShip, new SpriteRenderer(
+						alienSprite));
+			}
+		}
 	}
 
 	private void addKeyListener() {
@@ -84,31 +125,6 @@ public class GamePanel extends JPanel implements Runnable {
 		});
 	}
 
-	private void createAlienShips() {
-		BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
-				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
-
-		// declare width, height and spacing
-		final int width = 25;
-		final int height = 20;
-
-		// we have five rows of alien ships
-		for (int row = 0; row < 5; row++) {
-			// for every row we calculate the y-position of the ships
-			final int y = SPACING + row * (SPACING + height);
-
-			// we have 11 alien ships per row
-			for (int i = 0; i < 11; i++) {
-				// for every alien ship we calculate its x-position
-				final int x = SPACING + i * (SPACING + width);
-
-				// add the alien ship to the collection
-				alienShips.add(new AlienShipController(new AlienShip(x, y,
-						width, height, row), boundaryGuard));
-			}
-		}
-	}
-
 	// we override this method to be able to draw in the game panel
 	// it is called by swing every time the game panel is redrawn
 	@Override
@@ -120,19 +136,7 @@ public class GamePanel extends JPanel implements Runnable {
 		// set the paint color to white
 		graphicsContext.setColor(Color.WHITE);
 
-		for (AlienShipController alienShipController : alienShips) {
-			AlienShip alienShip = alienShipController.getAlienShip();
-			// get the sprite for a certain row
-			final Sprite alienSprite = spriteFactory.getAlienSprite(alienShip
-					.getRow());
-			// draw the alien ship sprite
-			alienSprite.draw(graphicsContext, alienShip.getX(),
-					alienShip.getY());
-		}
-
-		Sprite playerSprite = spriteFactory.getPlayerSprite();
-		playerSprite.draw(graphicsContext, playerShipController.getPlayerShip()
-				.getX(), playerShipController.getPlayerShip().getY());
+		gameObjectsRenderer.render(graphicsContext);
 
 		// draw the laser bullet (only if fired)
 		Laser laser = playerShipController.getLaser();

@@ -1,6 +1,6 @@
 package de.thnuernberg.bme.swe.spaceinvaders.model;
 
-public class AlienShip {
+public class AlienShip implements GameObject {
 
 	private int x;
 	private int y;
@@ -8,18 +8,22 @@ public class AlienShip {
 	private int height;
 	private int row;
 
+	@Override
 	public int getX() {
 		return x;
 	}
 
+	@Override
 	public int getY() {
 		return y;
 	}
 
+	@Override
 	public int getWidth() {
 		return width;
 	}
 
+	@Override
 	public int getHeight() {
 		return height;
 	}
