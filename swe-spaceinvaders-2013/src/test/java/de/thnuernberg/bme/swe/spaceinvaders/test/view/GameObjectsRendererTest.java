@@ -33,10 +33,19 @@ public class GameObjectsRendererTest {
 		gameObjectsRenderer.add(gameObject, renderer);
 		gameObjectsRenderer.render(graphicsContext);
 
-		Mockito.verify(gameObject).getX();
-		Mockito.verify(gameObject).getY();
-		Mockito.verify(renderer).render(graphicsContext, gameObject.getX(),
-				gameObject.getY());
+		Mockito.verify(renderer).render(graphicsContext, gameObject);
+	}
+
+	@Test
+	public void remove() {
+		GameObjectsRenderer gameObjectsRenderer = new GameObjectsRenderer();
+		GameObject gameObject = Mockito.mock(GameObject.class);
+		Renderer renderer = Mockito.mock(Renderer.class);
+
+		gameObjectsRenderer.add(gameObject, renderer);
+		gameObjectsRenderer.remove(gameObject);
+
+		Assert.assertEquals(0, gameObjectsRenderer.registeredRenderersCount());
 	}
 
 }

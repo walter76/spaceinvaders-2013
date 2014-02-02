@@ -10,12 +10,6 @@ public class PlayerShipController {
 	private final MoveableGameObject playerShip;
 	private final BoundaryGuard boundaryGuard;
 
-	private Laser laser;
-
-	public Laser getLaser() {
-		return laser;
-	}
-
 	public MoveableGameObject getPlayerShip() {
 		return playerShip;
 	}
@@ -53,20 +47,9 @@ public class PlayerShipController {
 		boundaryGuard.checkBoundaries(playerShip);
 	}
 
-	public void fire() {
-		if (laser == null) {
-			laser = new Laser(playerShip.getX() + (playerShip.getWidth() - 5)
-					/ 2, playerShip.getY() - 5);
-		}
-	}
-
-	public void update() {
-		if (laser != null) {
-			new LaserController(laser, LaserController.Direction.UP).update();
-			if (boundaryGuard.isOutOfBounds(laser)) {
-				laser = null;
-			}
-		}
+	public Laser fire() {
+		return new Laser(playerShip.getX() + (playerShip.getWidth() - 5) / 2,
+				playerShip.getY() - 5);
 	}
 
 }

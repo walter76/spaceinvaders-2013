@@ -122,25 +122,15 @@ public class PlayerShipControllerTest {
 	}
 
 	@Test
-	public void laserNotFired() {
-		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
-				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
-		final PlayerShipController playerShipController = new PlayerShipController(
-				new PlayerShip(), boundaryGuard);
-
-		Assert.assertNull(playerShipController.getLaser());
-	}
-
-	@Test
 	public void fireLaser() {
 		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
 				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
 		final PlayerShipController playerShipController = new PlayerShipController(
 				new PlayerShip(), boundaryGuard);
 
-		playerShipController.fire();
+		Laser laser = playerShipController.fire();
 
-		Assert.assertNotNull(playerShipController.getLaser());
+		Assert.assertNotNull(laser);
 	}
 
 	@Test
@@ -153,67 +143,12 @@ public class PlayerShipControllerTest {
 
 		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT,
 				SPACING);
-		playerShipController.fire();
+		Laser laser = playerShipController.fire();
 
-		Laser laser = playerShipController.getLaser();
 		Assert.assertEquals(
 				playerShip.getX() + (playerShip.getWidth() - 5) / 2,
 				laser.getX());
 		Assert.assertEquals(playerShip.getY() - 5, laser.getY());
-	}
-
-	@Test
-	public void updateAfterLaserFired() {
-		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
-				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
-		final PlayerShipController playerShipController = new PlayerShipController(
-				new PlayerShip(), boundaryGuard);
-
-		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT,
-				SPACING);
-		playerShipController.fire();
-		final int startLaserX = playerShipController.getLaser().getX();
-		final int startLaserY = playerShipController.getLaser().getY();
-
-		playerShipController.update();
-
-		Laser laser = playerShipController.getLaser();
-		Assert.assertEquals(startLaserX, laser.getX());
-		Assert.assertEquals(startLaserY - 5, laser.getY());
-	}
-
-	@Test
-	public void updateLaserNotFired() {
-		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
-				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
-		final PlayerShipController playerShipController = new PlayerShipController(
-				new PlayerShip(), boundaryGuard);
-
-		playerShipController.resetToStartPosition(PANEL_WIDTH, PANEL_HEIGHT,
-				SPACING);
-
-		playerShipController.update();
-
-		Assert.assertNull(playerShipController.getLaser());
-	}
-
-	@Test
-	public void updateLaserOutOfBounds() {
-		final int panelHeight = 20;
-		final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
-				SPACING, PANEL_WIDTH - SPACING, panelHeight - SPACING);
-		final PlayerShipController playerShipController = new PlayerShipController(
-				new PlayerShip(), boundaryGuard);
-
-		playerShipController.resetToStartPosition(PANEL_WIDTH, panelHeight,
-				SPACING);
-		playerShipController.fire();
-
-		Assert.assertNotNull(playerShipController.getLaser());
-
-		playerShipController.update();
-
-		Assert.assertNull(playerShipController.getLaser());
 	}
 
 	@Test
@@ -223,13 +158,10 @@ public class PlayerShipControllerTest {
 		final PlayerShipController playerShipController = new PlayerShipController(
 				new PlayerShip(), boundaryGuard);
 
-		playerShipController.fire();
+		Laser firstLaser = playerShipController.fire();
+		Laser secondLaser = playerShipController.fire();
 
-		Laser laser = playerShipController.getLaser();
-
-		playerShipController.fire();
-
-		Assert.assertEquals(laser, playerShipController.getLaser());
+		Assert.assertNotEquals(firstLaser, secondLaser);
 	}
 
 }

@@ -2,9 +2,9 @@ package de.thnuernberg.bme.swe.spaceinvaders.model;
 
 public class Laser implements MoveableGameObject {
 
-	private static final int WIDTH = 5;
-	private static final int HEIGHT = 5;
-	
+	public static final int WIDTH = 5;
+	public static final int HEIGHT = 5;
+
 	private int x;
 	private int y;
 

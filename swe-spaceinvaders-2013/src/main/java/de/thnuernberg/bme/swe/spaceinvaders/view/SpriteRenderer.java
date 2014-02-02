@@ -2,6 +2,8 @@ package de.thnuernberg.bme.swe.spaceinvaders.view;
 
 import java.awt.Graphics;
 
+import de.thnuernberg.bme.swe.spaceinvaders.model.GameObject;
+
 public class SpriteRenderer implements Renderer {
 
 	private final Sprite sprite;
@@ -11,8 +13,8 @@ public class SpriteRenderer implements Renderer {
 	}
 
 	@Override
-	public void render(Graphics graphicsContext, int x, int y) {
-		sprite.draw(graphicsContext, x, y);
+	public void render(Graphics graphicsContext, GameObject gameObject) {
+		sprite.draw(graphicsContext, gameObject.getX(), gameObject.getY());
 	}
 
 }

@@ -15,6 +15,7 @@ import de.thnuernberg.bme.swe.spaceinvaders.model.AlienShip;
 import de.thnuernberg.bme.swe.spaceinvaders.model.Laser;
 import de.thnuernberg.bme.swe.spaceinvaders.model.PlayerShip;
 import de.thnuernberg.bme.swe.spaceinvaders.view.GameObjectsRenderer;
+import de.thnuernberg.bme.swe.spaceinvaders.view.LaserRenderer;
 import de.thnuernberg.bme.swe.spaceinvaders.view.Sprite;
 import de.thnuernberg.bme.swe.spaceinvaders.view.SpriteFactory;
 import de.thnuernberg.bme.swe.spaceinvaders.view.SpriteRenderer;
@@ -34,12 +35,14 @@ public class GamePanel extends JPanel implements Runnable {
 
 	// player ship
 	private PlayerShipController playerShipController;
+	private LaserController playerLaserController;
 
 	// flag to indicate whether the game is running or not
 	private boolean gameRunning;
 
 	// list of alien ships
 	private final List<AlienShipController> alienShips = new ArrayList<AlienShipController>();
+	private LaserController alienLaserController;
 
 	public GamePanel() {
 
@@ -74,9 +77,6 @@ public class GamePanel extends JPanel implements Runnable {
 	}
 
 	private void setUpAlienShips() {
-		BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(SPACING,
-				SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT - SPACING);
-
 		// declare width, height and spacing
 		final int width = 25;
 		final int height = 20;
@@ -94,8 +94,7 @@ public class GamePanel extends JPanel implements Runnable {
 				// add the alien ship to the collection
 				final AlienShip alienShip = new AlienShip(x, y, width, height,
 						row);
-				alienShips
-						.add(new AlienShipController(alienShip, boundaryGuard));
+				alienShips.add(new AlienShipController(alienShip));
 				final Sprite alienSprite = spriteFactory.getAlienSprite(row);
 				gameObjectsRenderer.add(alienShip, new SpriteRenderer(
 						alienSprite));
@@ -117,7 +116,12 @@ public class GamePanel extends JPanel implements Runnable {
 					playerShipController.moveRight();
 				} else if (e.getKeyChar() == ' ') {
 					// shoot a laser bullet
-					playerShipController.fire();
+					if (playerLaserController == null) {
+						Laser laser = playerShipController.fire();
+						playerLaserController = new LaserController(laser,
+								LaserController.Direction.UP);
+						gameObjectsRenderer.add(laser, new LaserRenderer());
+					}
 				}
 				// repaint the panel
 				repaint();
@@ -137,21 +141,6 @@ public class GamePanel extends JPanel implements Runnable {
 		graphicsContext.setColor(Color.WHITE);
 
 		gameObjectsRenderer.render(graphicsContext);
-
-		// draw the laser bullet (only if fired)
-		Laser laser = playerShipController.getLaser();
-		if (laser != null) {
-			graphicsContext.fillOval(laser.getX(), laser.getY(), 5, 5);
-		}
-
-		// draw the bullet of the alien ship
-		for (AlienShipController alienShipController : alienShips) {
-			Laser alienLaser = alienShipController.getLaser();
-			if (alienLaser != null) {
-				graphicsContext.fillOval(alienLaser.getX(), alienLaser.getY(),
-						5, 5);
-			}
-		}
 	}
 
 	// is called as soon as we start the new thread
@@ -168,21 +157,33 @@ public class GamePanel extends JPanel implements Runnable {
 			}
 
 			// update the game
-			playerShipController.update();
-
-			boolean alienLaserFired = false;
-			for (AlienShipController alienShipController : alienShips) {
-				alienShipController.update();
-				if (alienShipController.getLaser() != null) {
-					alienLaserFired = true;
+			final BoundaryGuard boundaryGuard = new BouncingBoundaryGuard(
+					SPACING, SPACING, PANEL_WIDTH - SPACING, PANEL_HEIGHT
+							- SPACING);
+			if (playerLaserController != null) {
+				playerLaserController.update();
+				Laser laser = playerLaserController.getLaser();
+				if (boundaryGuard.isOutOfBounds(laser)) {
+					playerLaserController = null;
+					gameObjectsRenderer.remove(laser);
 				}
 			}
 
-			if (!alienLaserFired) {
+			if (alienLaserController != null) {
+				alienLaserController.update();
+				Laser laser = alienLaserController.getLaser();
+				if (boundaryGuard.isOutOfBounds(laser)) {
+					alienLaserController = null;
+					gameObjectsRenderer.remove(laser);
+				}
+			} else {
 				// randomly select a alien ship to fire back
 				Random random = new Random();
 				int alienShipNumber = random.nextInt(alienShips.size() - 1);
-				alienShips.get(alienShipNumber).fire();
+				Laser laser = alienShips.get(alienShipNumber).fire();
+				alienLaserController = new LaserController(laser,
+						LaserController.Direction.DOWN);
+				gameObjectsRenderer.add(laser, new LaserRenderer());
 			}
 
 			// repaint the panel

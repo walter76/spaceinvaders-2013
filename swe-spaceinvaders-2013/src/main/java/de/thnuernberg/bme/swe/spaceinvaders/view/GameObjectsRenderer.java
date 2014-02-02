@@ -23,13 +23,16 @@ public class GameObjectsRenderer {
 				.entrySet()) {
 			GameObject gameObject = entry.getKey();
 			Renderer renderer = entry.getValue();
-			renderer.render(graphicsContext, gameObject.getX(),
-					gameObject.getY());
+			renderer.render(graphicsContext, gameObject);
 		}
 	}
 
 	public int registeredRenderersCount() {
 		return gameObjectRenderers.size();
+	}
+
+	public void remove(GameObject gameObject) {
+		gameObjectRenderers.remove(gameObject);
 	}
 
 }
