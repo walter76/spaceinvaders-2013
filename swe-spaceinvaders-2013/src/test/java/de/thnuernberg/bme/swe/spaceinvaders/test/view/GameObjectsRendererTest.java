@@ -8,13 +8,14 @@ import org.mockito.Mockito;
 
 import de.thnuernberg.bme.swe.spaceinvaders.model.GameObject;
 import de.thnuernberg.bme.swe.spaceinvaders.view.GameObjectsRenderer;
+import de.thnuernberg.bme.swe.spaceinvaders.view.GameObjectsRendererImpl;
 import de.thnuernberg.bme.swe.spaceinvaders.view.Renderer;
 
 public class GameObjectsRendererTest {
 
 	@Test
 	public void addGameObjectRenderer() {
-		GameObjectsRenderer gameObjectsRenderer = new GameObjectsRenderer();
+		GameObjectsRenderer gameObjectsRenderer = new GameObjectsRendererImpl();
 		GameObject gameObject = Mockito.mock(GameObject.class);
 		Renderer renderer = Mockito.mock(Renderer.class);
 
@@ -25,7 +26,7 @@ public class GameObjectsRendererTest {
 
 	@Test
 	public void render() {
-		GameObjectsRenderer gameObjectsRenderer = new GameObjectsRenderer();
+		GameObjectsRenderer gameObjectsRenderer = new GameObjectsRendererImpl();
 		GameObject gameObject = Mockito.mock(GameObject.class);
 		Renderer renderer = Mockito.mock(Renderer.class);
 		Graphics graphicsContext = Mockito.mock(Graphics.class);
@@ -38,7 +39,7 @@ public class GameObjectsRendererTest {
 
 	@Test
 	public void remove() {
-		GameObjectsRenderer gameObjectsRenderer = new GameObjectsRenderer();
+		GameObjectsRenderer gameObjectsRenderer = new GameObjectsRendererImpl();
 		GameObject gameObject = Mockito.mock(GameObject.class);
 		Renderer renderer = Mockito.mock(Renderer.class);
 

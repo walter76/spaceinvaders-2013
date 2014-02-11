@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import javax.inject.Inject;
 import javax.swing.JPanel;
 
 import de.thnuernberg.bme.swe.spaceinvaders.model.AlienShip;
@@ -30,8 +31,8 @@ public class GamePanel extends JPanel implements Runnable {
 	private static final int SPACING = 5;
 
 	// the sprite factory provides the sprites for the game
-	private final SpriteFactory spriteFactory = new SpriteFactory();
-	private final GameObjectsRenderer gameObjectsRenderer = new GameObjectsRenderer();
+	private final SpriteFactory spriteFactory;
+	private final GameObjectsRenderer gameObjectsRenderer;
 
 	// player ship
 	private PlayerShipController playerShipController;
@@ -44,7 +45,11 @@ public class GamePanel extends JPanel implements Runnable {
 	private final List<AlienShipController> alienShips = new ArrayList<AlienShipController>();
 	private LaserController alienLaserController;
 
-	public GamePanel() {
+	@Inject
+	public GamePanel(final SpriteFactory spriteFactory,
+			final GameObjectsRenderer gameObjectsRenderer) {
+		this.spriteFactory = spriteFactory;
+		this.gameObjectsRenderer = gameObjectsRenderer;
 
 		// set the background color to black
 		setBackground(Color.BLACK);
